@@ -1,0 +1,12 @@
+{
+  "name": "korean-f1-calendar",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Official F1 subscription to a Korean Google Calendar using Apps Script",
+  "scripts": {
+    "test": "node --test test/*.test.js",
+    "build": "node scripts/build.js",
+    "check": "npm test && npm run build"
+  },
+  "engines": { "node": ">=18" }
+}

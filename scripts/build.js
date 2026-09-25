@@ -1,0 +1,14 @@
+'use strict';
+const fs = require('node:fs');
+const path = require('node:path');
+const root = path.resolve(__dirname, '..');
+const out = path.join(root, 'dist');
+fs.mkdirSync(out, { recursive: true });
+const files = ['Config.js', 'Core.js', 'Main.js'];
+const code = files.map(name => '// ---- ' + name + ' ----\n' + fs.readFileSync(path.join(root, 'src', name), 'utf8')).join('\n\n');
+new (require('node:vm').Script)(code, { filename: 'Code.gs' });
+fs.writeFileSync(path.join(out, 'Code.gs'), code);
+const manifest = fs.readFileSync(path.join(root, 'src', 'appsscript.json'), 'utf8');
+JSON.parse(manifest);
+fs.writeFileSync(path.join(out, 'appsscript.json'), manifest);
+console.log('Built dist/Code.gs and dist/appsscript.json (paste into Apps Script).');
