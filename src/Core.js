@@ -135,7 +135,7 @@ var F1Core = (function () {
       }
       if (!allDay && Date.parse(end.dateTime) <= Date.parse(start.dateTime)) throw new Error('종료 시각이 잘못된 원본 일정: ' + title);
       var resource = {
-        summary: '[' + session + '] ' + (race ? race.ko + ' GP' : fallback),
+        summary: '[' + session + '] ' + (allDay ? '⏳ ' : '') + (race ? race.ko + ' GP' : fallback),
         location: location,
         description: officialUrl(event, year),
         status: 'confirmed', visibility: 'default', transparency: 'transparent',

@@ -50,8 +50,8 @@ test('a relocated race uses the actual venue, not the usual country venue', () =
 test('country-only locations from the real ECAL preview resolve using the named GP', () => {
   // Titles and locations supplied by the user; timestamps below are synthetic.
   const samples = [
-    ['🏎 FORMULA 1 QATAR AIRWAYS AZERBAIJAN GRAND PRIX 2027 - Practice 2 (TBC)', 'Azerbaijan', '[P2] 아제르바이잔 GP', '바쿠 시티 서킷'],
-    ['🏎 FORMULA 1 GRAN PREMIO DE LA CIUDAD DE MÉXICO 2027 - Practice 3 (TBC)', 'Mexico', '[P3] 멕시코 GP', '에르마노스 로드리게스 서킷'],
+    ['🏎 FORMULA 1 QATAR AIRWAYS AZERBAIJAN GRAND PRIX 2027 - Practice 2 (TBC)', 'Azerbaijan', '[P2] ⏳ 아제르바이잔 GP', '바쿠 시티 서킷'],
+    ['🏎 FORMULA 1 GRAN PREMIO DE LA CIUDAD DE MÉXICO 2027 - Practice 3 (TBC)', 'Mexico', '[P3] ⏳ 멕시코 GP', '에르마노스 로드리게스 서킷'],
     ['🏁 FORMULA 1 MSC CRUISES UNITED STATES GRAND PRIX 2026 - Race', 'United States', '[G] 미국 GP', '서킷 오브 디 아메리카스'],
     ['🏁 FORMULA 1 HEINEKEN LAS VEGAS GRAND PRIX 2026 - Race', 'United States', '[G] 라스베이거스 GP', '라스베이거스 스트립 서킷'],
     ['🏎 FORMULA 1 TAG HEUER GRAN PREMIO DE ESPAÑA 2026 - Practice 1', 'Spain', '[P1] 스페인 GP', '마드링'],
@@ -99,12 +99,15 @@ test('unknown races and venues appear in English and are reported', () => {
 test('all-day/TBD entries have no alarm and can become timed without duplication', () => {
   const input = event('tbd', { summary: 'Japanese GP - Race TBC', start: { date: '2027-03-28' }, end: { date: '2027-03-29' } });
   const out = core.normalize([input], options).desired[0].resource;
+  assert.equal(out.summary, '[G] ⏳ 일본 GP');
   assert.deepEqual(out.start, { date: '2027-03-28' });
   assert.deepEqual(out.reminders.overrides, []);
   const timed = event('tbd', { summary: 'Japanese GP - Race', start: { dateTime: '2027-03-28T05:00:00Z' }, end: { dateTime: '2027-03-28T07:00:00Z' } });
   const plan = reconcile([timed], [target(input)]);
   assert.equal(plan.actions.length, 1);
   assert.equal(plan.actions[0].type, 'update');
+  assert.equal(plan.actions[0].id, target(input).id);
+  assert.equal(plan.actions[0].resource.summary, '[G] 일본 GP');
   assert.ok(plan.actions[0].resource.start.dateTime);
   assert.equal(plan.actions[0].resource.start.date, undefined);
 });
